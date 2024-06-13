@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(uuid())
+  photo      String
+  name       String
+  email      String   @unique
+  password   String
+  role       Role
+  creation   DateTime @default(now())
+  last_login DateTime @db.Timestamp(6)
+  active     Boolean  @default(true)
+
+  @@map("users")
+}
+
+model openOrders {
+  id             String       @id @default(uuid())
+  num_id         Int          @default(autoincrement())
+  order_id       String
+  title          String
+  classification String
+  location       String
+  drawing        String
+  type_order     TypeOrder
+  equipament     String
+  creation       DateTime     @default(now())
+  start_prog     DateTime     @db.Timestamp(6)
+  end_prog       DateTime     @db.Timestamp(6)
+  responsible    String
+  conditions     String
+  priority       String
+  status         Status
+  rel_service    relService[]
+
+  @@map("openorders")
+}
+
+model relService {
+  id           String       @id @default(uuid())
+  order_id     String
+  service_id   String
+  description  String
+  line01       String
+  line02       String
+  line03       String
+  line04       String
+  line05       String
+  line06       String
+  line07       String
+  line08       String
+  line09       String
+  line10       String
+  line11       String
+  line12       String
+  line13       String
+  line14       String
+  rel_blockeds relBlocked[]
+  order        openOrders   @relation(fields: [order_id], references: [id])
+
+  @@map("relservice")
+}
+
+model relBlocked {
+  id          String          @id @default(uuid())
+  card_id     String
+  location    String
+  equipament  String
+  panel       String
+  state       StateRelBlocked
+  observation String
+  rel_service relService      @relation(fields: [card_id], references: [id])
+
+  @@map("relblocked")
+}
+
+model closedorders {
+  id              String   @id
+  end_enc         DateTime @db.Timestamp(6)
+  responsible_enc String
+  report          String
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model test_units {
+  id         BigInt   @id @default(autoincrement())
+  test_unit  String?
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+}
+
+enum Role {
+  ADMIN
+  COMPANY
+}
+
+enum Status {
+  ABERTA
+  ANDAMENTO
+  FECHADA
+}
+
+enum TypeOrder {
+  PREVENTIVA
+  CORRETIVA
+  MELHORIA
+}
+
+enum StateRelBlocked {
+  OPEN
+}
