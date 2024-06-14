@@ -28,11 +28,9 @@ import StepperCustomDot from './StepperCustomDot'
 // ** Styled Components
 import StepperWrapper from 'src/@core/styles/mui/stepper'
 import Calendario from 'src/pages/components/Calendario'
-import { OpenOrderType } from 'src/types/api/openOrders'
-import { hasValue } from 'src/@core/utils/hasValue'
 import { InputLabel, MenuItem, Select } from '@mui/material'
-import { getTimeStampsDate } from 'src/@core/utils/getTimeStampsDate'
 import { BASEURL } from 'src/configs/api'
+import axios from 'axios'
 
 const inputsCards: Array<number> = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
@@ -171,15 +169,24 @@ const StepperLinearWithValidation = () => {
   const getOrderData = async (id: string) => {
     setLoad(true)
 
-    const response = await fetch(`${BASEURL}/openorders/${id}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    const data = await response.json()
+    // const response = await fetch(`${BASEURL}/openorders/${id}`, {
+    //   method: 'GET',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   }
+    // })
+    // const data = await response.json()
 
-    console.log('PELA API: ', data)
+    axios
+      .get(`${BASEURL}/openorders/${id}`, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(function (response) {
+        console.log(response)
+      })
 
     // setTitle(hasValue(data, data[0].title))
     // setClassification(hasValue(data, data[0].classification))
@@ -195,25 +202,22 @@ const StepperLinearWithValidation = () => {
   }
 
   const onSubmit = data => {
-    // const formState = {
-    //   title,
-    //   classification,
-    //   typeOrder,
-    //   equipment,
-    //   location,
-    //   drawing,
-    //   conditions,
-    //   priority,
-    //   responsible,
-    //   hourWork,
-    //   encerrado
-    // }
+    const formState = {
+      title,
+      classification,
+      typeOrder,
+      equipment,
+      location,
+      drawing,
+      conditions,
+      priority,
+      responsible,
+      hourWork,
+      encerrado
+    }
 
-    // if (newArray.length > 0) {
-    //   if (String(newArray[0].orderid).trim() !== '') {
-    //     getOrderData(orderId)
-    //   }
-    // }
+    getOrderData(orderId)
+
     setActiveStep(activeStep + 1)
     if (activeStep === steps.length - 1) {
       toast.success('Form Submitted')

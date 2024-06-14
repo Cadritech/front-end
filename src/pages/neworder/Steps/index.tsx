@@ -51,6 +51,7 @@ import {
 import { db } from 'src/lib/prisma'
 import { BASEURL } from 'src/configs/api'
 import { statusCardsData } from 'src/mock/statusCards.mock'
+import axios from 'axios'
 
 const inputsCards: Array<number> = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
@@ -268,31 +269,59 @@ const StepperLinearWithValidation = () => {
     }
 
     if (valuesDataForm.length >= 3) {
-      await fetch(`${BASEURL}/neworder`, {
-        method: 'post',
-        body: JSON.stringify({
-          order_id: gerarCodigoAleatorio(typeOrder),
-          title: valuesDataForm[0].title,
-          classification: classification,
-          location: valuesDataForm[0].location,
-          drawing: valuesDataForm[0].drawing,
-          type_order: typeOrder,
-          equipament: valuesDataForm[0].equipament,
-          creation: dataAtualISO(),
-          start_prog: String(startProg).trim() !== '' ? converterParaISO(startProg) : '',
-          end_prog: String(endProg).trim() !== '' ? converterParaISO(endProg) : '',
-          responsible: valuesDataForm[0].responsible,
-          conditions: valuesDataForm[0].condions,
-          priority: priority,
-          roteiro: valuesDataForm[1].roteiro,
-          rb: respJson
-        })
-      }).then(response => {
-        console.log('response: ')
-        console.log(response)
-      })
+      // await fetch(`${BASEURL}/neworder`, {
+      //   method: 'post',
+      //   body: JSON.stringify({
+      //     order_id: gerarCodigoAleatorio(typeOrder),
+      //     title: valuesDataForm[0].title,
+      //     classification: classification,
+      //     location: valuesDataForm[0].location,
+      //     drawing: valuesDataForm[0].drawing,
+      //     type_order: typeOrder,
+      //     equipament: valuesDataForm[0].equipament,
+      //     creation: dataAtualISO(),
+      //     start_prog: String(startProg).trim() !== '' ? converterParaISO(startProg) : '',
+      //     end_prog: String(endProg).trim() !== '' ? converterParaISO(endProg) : '',
+      //     responsible: valuesDataForm[0].responsible,
+      //     conditions: valuesDataForm[0].condions,
+      //     priority: priority,
+      //     roteiro: valuesDataForm[1].roteiro,
+      //     rb: respJson
+      //   })
+      // }).then(response => {
+      //   console.log('response: ')
+      //   console.log(response)
+      // })
 
-      toast.success('Dados Salvos com Sucesso')
+      axios
+        .post(
+          `${BASEURL}/neworder`,
+          JSON.stringify({
+            order_id: gerarCodigoAleatorio(typeOrder),
+            title: valuesDataForm[0].title,
+            classification: classification,
+            location: valuesDataForm[0].location,
+            drawing: valuesDataForm[0].drawing,
+            type_order: typeOrder,
+            equipament: valuesDataForm[0].equipament,
+            creation: dataAtualISO(),
+            start_prog: String(startProg).trim() !== '' ? converterParaISO(startProg) : '',
+            end_prog: String(endProg).trim() !== '' ? converterParaISO(endProg) : '',
+            responsible: valuesDataForm[0].responsible,
+            conditions: valuesDataForm[0].condions,
+            priority: priority,
+            roteiro: valuesDataForm[1].roteiro,
+            rb: respJson
+          })
+        )
+        .then(function (response) {
+          console.log(response)
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+
+      toast.success('Ordem Salva com Sucesso!')
       setActiveStep(activeStep + 1)
     }
 
